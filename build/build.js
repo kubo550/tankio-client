@@ -41,7 +41,6 @@ var Bullet = (function () {
         if (!this.isAlive()) {
             this.pop();
         }
-        socket.emit('bulletMoved', { position: { x: this.pos.x, y: this.pos.y }, id: this.id });
     };
     Bullet.prototype.isAlive = function () {
         return this.lifespan >= 0;
@@ -375,8 +374,9 @@ var socket;
 var restartGameButton;
 var players = [];
 var player;
+var serverBaseUrl = process.env.serverBaseUrl || 'http://localhost:8080';
 function setup() {
-    socket = io.connect('http://localhost:8080');
+    socket = io.connect(serverBaseUrl);
     socket.on('connect', function () {
         console.log('🚀 - Socket is connected');
     });
@@ -397,15 +397,10 @@ function setup() {
         }
     });
     socket.on(socketEventsDictonary.fireBullet, function (data) {
+        console.log('other player fired');
         var player = players.find(function (p) { return p.id === data.playerId; });
         if (player) {
             player.shoot({ emitEvent: false, bulletId: data.id });
-        }
-    });
-    socket.on('bulletMoved', function (data) {
-        var bullet = bullets.find(function (b) { return b.id === data.id; });
-        if (bullet) {
-            bullet.setPosition({ x: data.position.x, y: data.position.y });
         }
     });
 }

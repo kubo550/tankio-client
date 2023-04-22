@@ -34,7 +34,6 @@ class Bullet {
         if (!this.isAlive()) {
             this.pop();
         }
-        socket.emit('bulletMoved', {position: {x: this.pos.x, y: this.pos.y}, id: this.id});
     }
 
     isAlive() {

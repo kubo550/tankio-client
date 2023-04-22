@@ -11,8 +11,11 @@ type ServerPlayer = { color: string, rotation: number, name: string, id: string,
 let players: Tank[] = []
 let player: Tank;
 
+const serverBaseUrl =  process.env.serverBaseUrl ||  'http://localhost:8080';
+
+
 function setup() {
-    socket = io.connect('http://localhost:8080');
+    socket = io.connect(serverBaseUrl);
 
     socket.on('connect', () => {
         console.log('🚀 - Socket is connected')
@@ -25,13 +28,11 @@ function setup() {
         socket.emit(socketEventsDictonary.startGame);
     });
 
-
     socket.on(socketEventsDictonary.startGame, (data) => {
         walls = generateWallObjects(data.walls as ServerWall[]);
         players = setupPlayers(data.players as ServerPlayer[]);
         player = players.find(p => p.id === socket.id);
     });
-
 
     socket.on(socketEventsDictonary.moveTank, (data) => {
         const player = players.find(p => p.id === data.id);
@@ -41,16 +42,10 @@ function setup() {
     });
 
     socket.on(socketEventsDictonary.fireBullet, (data) => {
+        console.log('other player fired')
         const player = players.find(p => p.id === data.playerId);
         if (player) {
             player.shoot({emitEvent: false, bulletId: data.id});
-        }
-    });
-
-    socket.on('bulletMoved', (data) => {
-        const bullet = bullets.find(b => b.id === data.id);
-        if (bullet) {
-            bullet.setPosition({x: data.position.x, y: data.position.y});
         }
     });
 

@@ -10,6 +10,7 @@
   },
   "homepage": "https://github.com/Gaweph/p5-typescript-starter#readme",
   "devDependencies": {
+    "@types/node": "^18.15.13",
     "@types/p5": "^1.3.3",
     "@types/sat": "^0.0.31",
     "@types/socket.io-client": "^3.0.0",
