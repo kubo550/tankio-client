@@ -167,6 +167,7 @@ var Tank = (function () {
         this.rotation = rotation;
         this.id = id;
         this.name = name;
+        this.stats = { kills: 0, deaths: 0 };
         this.width = 15;
         this.height = 20;
         this.particles = [];
@@ -218,7 +219,10 @@ var Tank = (function () {
             var position = p5.Vector.add(this.pos, positionBeforeTank);
             bulletId = bulletId || random(100000).toString();
             var bullet = new Bullet(bulletId, position.x, position.y, this.color, this.rotation);
-            emitEvent && socket.emit(socketEventsDictonary.fireBullet, { id: bullet.id, position: { x: bullet.pos.x, y: bullet.pos.y } });
+            emitEvent && socket.emit(socketEventsDictonary.fireBullet, {
+                id: bullet.id,
+                position: { x: bullet.pos.x, y: bullet.pos.y }
+            });
             bullets.push(bullet);
             setTimeout(function () {
                 _this.barrelLength = 10;
@@ -264,6 +268,12 @@ var Tank = (function () {
         this.pos = createVector(pos.x, pos.y);
         this.rotation = rotation;
     };
+    Tank.prototype.setStats = function (stats) {
+        this.stats = stats;
+    };
+    Tank.prototype.getStatsText = function () {
+        return this.stats.kills + "  " + this.stats.deaths;
+    };
     Tank.prototype.show = function () {
         push();
         rectMode(CENTER);
@@ -290,7 +300,12 @@ var Tank = (function () {
         this.emitMove();
     };
     Tank.prototype.emitMove = function () {
-        socket.emit(socketEventsDictonary.moveTank, { x: this.pos.x, y: this.pos.y, rotation: this.rotation, id: this.id });
+        socket.emit(socketEventsDictonary.moveTank, {
+            x: this.pos.x,
+            y: this.pos.y,
+            rotation: this.rotation,
+            id: this.id
+        });
     };
     Tank.prototype.getPolygon = function () {
         return new SAT.Polygon(new SAT.Vector(this.pos.x - this.width / 2, this.pos.y - this.height / 2), [
@@ -372,7 +387,7 @@ var Wall = (function () {
     };
     return Wall;
 }());
-var CANVAS_WIDTH = 403, CANVAS_HEIGHT = 403;
+var CANVAS_WIDTH = 403, CANVAS_HEIGHT = 403 + 50;
 var walls = [];
 var bullets = [];
 var socket;
@@ -409,10 +424,14 @@ function setup() {
         }
     });
     socket.on(socketEventsDictonary.hitTarget, function (data) {
+        console.log('hit target');
         var player = players.find(function (p) { return p.id === data.hitTankId; });
         if (player) {
             player.explode();
         }
+        console.log('hit target', data.players.map(function (p) { return p.stats; }));
+        players.forEach(function (p) { return p.setStats(data.players.find(function (pl) { return pl.id === p.id; }).stats); });
+        console.log('hit target', players.map(function (p) { return p.getStatsText(); }));
     });
     socket.on(socketEventsDictonary.playerConnected, function (data) {
         console.log('player connected', data);
@@ -425,6 +444,7 @@ function draw() {
     players.forEach(function (player) { return player.update(); });
     bullets.forEach(function (bullet) { return bullet.update(); });
     bullets = bullets.filter(function (bullet) { return bullet.isAlive(); });
+    showStats(players);
 }
 function keyPressed() {
     if (keyCode === UP_ARROW) {
@@ -456,6 +476,27 @@ function keyReleased() {
     if (keyCode === DOWN_ARROW) {
         player.movingController.setControls({ down: false });
     }
+}
+function showStats(players) {
+    players.forEach(function (player, i) {
+        push();
+        var x = 40 * i + 20;
+        fill(255);
+        textSize(8);
+        textAlign(CENTER);
+        text(limitNameChars(player.name, 8), x, CANVAS_HEIGHT - 40);
+        textSize(10);
+        text(player.getStatsText(), x, CANVAS_HEIGHT - 10);
+        rectMode(CENTER);
+        fill(player.color);
+        rect(x, CANVAS_HEIGHT - 30, 16, 12);
+        fill(0);
+        rect(x - 6, CANVAS_HEIGHT - 30, 8, 5);
+        pop();
+    });
+}
+function limitNameChars(str, end) {
+    return str.length > end ? str.slice(0, end) + '..' : str;
 }
 function generateWallObjects(walls) {
     return walls.map(function (wall) { return new Wall(wall.x, wall.y, wall.width, wall.height, 'gray'); });

@@ -1,4 +1,4 @@
-const CANVAS_WIDTH = 403, CANVAS_HEIGHT = 403;
+const CANVAS_WIDTH = 403, CANVAS_HEIGHT = 403 + 50;
 let walls: Wall[] = [];
 let bullets: Bullet[] = [];
 let socket: io.Socket;
@@ -57,18 +57,20 @@ function setup() {
     });
 
     socket.on(socketEventsDictonary.hitTarget, (data: { hitTankId: string, bulletId: string } & {players: ServerPlayer[]}) => {
+        console.log('hit target')
         const player = players.find(p => p.id === data.hitTankId);
         if (player) {
             player.explode();
         }
+        console.log('hit target', data.players.map(p => p.stats));
+        players.forEach(p => p.setStats(data.players.find(pl => pl.id === p.id).stats));
+        console.log('hit target', players.map(p => p.getStatsText()));
     });
 
     socket.on(socketEventsDictonary.playerConnected, (data) => {
         console.log('player connected', data);
         players = players.filter(p => p.id !== data.socketId);
     });
-
-
 }
 
 
@@ -79,6 +81,8 @@ function draw() {
     players.forEach(player => player.update());
     bullets.forEach(bullet => bullet.update());
     bullets = bullets.filter(bullet => bullet.isAlive());
+
+    showStats(players);
 }
 
 

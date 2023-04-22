@@ -4,18 +4,20 @@ class Tank {
 
     public movingController: MovingControls;
 
+    public readonly id: string;
     public width: number;
     public height: number;
     public rotation: number;
-    public readonly id: string;
     public particles: Particle[];
     public isAlive: boolean;
-    private readonly name: string;
+    public name: string;
+    private stats: { kills: number, deaths: number };
     private readonly bulletLimit: number;
     private readonly rotateSpeed = 0.09;
     private readonly speed = 1.3;
     private barrelLength: number;
     private isShooting: boolean;
+    private readonly shootingTime = 500;
 
     constructor(public x: number, public y: number, public color: string, rotation: number, id: string, name: string) {
         this.pos = createVector(x, y);
@@ -26,6 +28,7 @@ class Tank {
         this.rotation = rotation
         this.id = id;
         this.name = name;
+        this.stats = {kills: 0, deaths: 0}
         this.width = 15;
         this.height = 20;
         this.particles = [];
@@ -77,8 +80,6 @@ class Tank {
 
     }
 
-    private readonly shootingTime = 500;
-
     shoot({emitEvent = true, bulletId}: { emitEvent?: boolean, bulletId?: string } = {}) {
         if (bullets.length < this.bulletLimit && !this.isShooting) {
             this.barrelLength = 20;
@@ -88,7 +89,10 @@ class Tank {
             const position = p5.Vector.add(this.pos, positionBeforeTank);
             bulletId = bulletId || random(100000).toString();
             const bullet = new Bullet(bulletId, position.x, position.y, this.color, this.rotation);
-            emitEvent && socket.emit(socketEventsDictonary.fireBullet, {id: bullet.id, position: {x: bullet.pos.x, y: bullet.pos.y}});
+            emitEvent && socket.emit(socketEventsDictonary.fireBullet, {
+                id: bullet.id,
+                position: {x: bullet.pos.x, y: bullet.pos.y}
+            });
 
             bullets.push(bullet);
             setTimeout(() => {
@@ -145,6 +149,13 @@ class Tank {
         this.rotation = rotation;
     }
 
+    public setStats(stats: { kills: number, deaths: number }) {
+        this.stats = stats;
+    }
+
+    public getStatsText() {
+        return `${this.stats.kills}  ${this.stats.deaths}`
+    }
     private show() {
         push();
         rectMode(CENTER)
@@ -174,7 +185,12 @@ class Tank {
     }
 
     private emitMove() {
-        socket.emit(socketEventsDictonary.moveTank, {x: this.pos.x, y: this.pos.y, rotation: this.rotation, id: this.id});
+        socket.emit(socketEventsDictonary.moveTank, {
+            x: this.pos.x,
+            y: this.pos.y,
+            rotation: this.rotation,
+            id: this.id
+        });
     }
 
     private getPolygon() {
