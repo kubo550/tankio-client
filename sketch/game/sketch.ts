@@ -1,4 +1,4 @@
-const CANVAS_WIDTH = 400, CANVAS_HEIGHT = 400;
+const CANVAS_WIDTH = 403, CANVAS_HEIGHT = 403;
 let walls: Wall[] = [];
 let bullets: Bullet[] = [];
 let socket: io.Socket;
@@ -18,33 +18,29 @@ function setup() {
         console.log('🚀 - Socket is connected')
     });
 
-
     createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
-
 
     restartGameButton = createButton('Restart Game');
     restartGameButton.mousePressed(() => {
-        socket.emit('restartGame');
+        socket.emit(socketEventsDictonary.startGame);
     });
 
 
-    socket.on('initLevel', (data) => {
-        console.log(data.walls)
+    socket.on(socketEventsDictonary.startGame, (data) => {
         walls = generateWallObjects(data.walls as ServerWall[]);
-        console.log(walls)
         players = setupPlayers(data.players as ServerPlayer[]);
         player = players.find(p => p.id === socket.id);
     });
 
 
-    socket.on('playerMoved', (data) => {
+    socket.on(socketEventsDictonary.moveTank, (data) => {
         const player = players.find(p => p.id === data.id);
         if (player) {
             player.setPosition({x: data.x, y: data.y}, data.rotation);
         }
     });
 
-    socket.on('playerShoot', (data) => {
+    socket.on(socketEventsDictonary.fireBullet, (data) => {
         const player = players.find(p => p.id === data.playerId);
         if (player) {
             player.shoot({emitEvent: false, bulletId: data.id});

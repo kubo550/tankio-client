@@ -1,3 +1,14 @@
+var socketEventsDictonary;
+(function (socketEventsDictonary) {
+    socketEventsDictonary["setNickname"] = "setNickname";
+    socketEventsDictonary["joinRoom"] = "joinRoom";
+    socketEventsDictonary["leaveRoom"] = "leaveRoom";
+    socketEventsDictonary["startGame"] = "startGame";
+    socketEventsDictonary["moveTank"] = "moveTank";
+    socketEventsDictonary["fireBullet"] = "fireBullet";
+    socketEventsDictonary["hitTarget"] = "hitTarget";
+    socketEventsDictonary["endGame"] = "endGame";
+})(socketEventsDictonary || (socketEventsDictonary = {}));
 var Bullet = (function () {
     function Bullet(id, x, y, color, rotation) {
         this.id = id;
@@ -357,7 +368,7 @@ var Wall = (function () {
     };
     return Wall;
 }());
-var CANVAS_WIDTH = 400, CANVAS_HEIGHT = 400;
+var CANVAS_WIDTH = 403, CANVAS_HEIGHT = 403;
 var walls = [];
 var bullets = [];
 var socket;
@@ -372,22 +383,20 @@ function setup() {
     createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
     restartGameButton = createButton('Restart Game');
     restartGameButton.mousePressed(function () {
-        socket.emit('restartGame');
+        socket.emit(socketEventsDictonary.startGame);
     });
-    socket.on('initLevel', function (data) {
-        console.log(data.walls);
+    socket.on(socketEventsDictonary.startGame, function (data) {
         walls = generateWallObjects(data.walls);
-        console.log(walls);
         players = setupPlayers(data.players);
         player = players.find(function (p) { return p.id === socket.id; });
     });
-    socket.on('playerMoved', function (data) {
+    socket.on(socketEventsDictonary.moveTank, function (data) {
         var player = players.find(function (p) { return p.id === data.id; });
         if (player) {
             player.setPosition({ x: data.x, y: data.y }, data.rotation);
         }
     });
-    socket.on('playerShoot', function (data) {
+    socket.on(socketEventsDictonary.fireBullet, function (data) {
         var player = players.find(function (p) { return p.id === data.playerId; });
         if (player) {
             player.shoot({ emitEvent: false, bulletId: data.id });
