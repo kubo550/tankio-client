@@ -7,4 +7,5 @@ enum socketEventsDictonary {
     fireBullet = 'fireBullet',
     hitTarget = 'hitTarget',
     endGame = 'endGame',
+    playerConnected = 'playerConnected',
 }

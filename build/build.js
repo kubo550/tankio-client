@@ -8,6 +8,7 @@ var socketEventsDictonary;
     socketEventsDictonary["fireBullet"] = "fireBullet";
     socketEventsDictonary["hitTarget"] = "hitTarget";
     socketEventsDictonary["endGame"] = "endGame";
+    socketEventsDictonary["playerConnected"] = "playerConnected";
 })(socketEventsDictonary || (socketEventsDictonary = {}));
 var Bullet = (function () {
     function Bullet(id, x, y, color, rotation) {
@@ -58,6 +59,7 @@ var Bullet = (function () {
                     _this.vel.mult(0);
                     _this.lifespan = 0;
                     other.explode();
+                    socket.emit(socketEventsDictonary.hitTarget, { id: other.id, bulletId: _this.id });
                 }
             }
         });
@@ -403,6 +405,16 @@ function setup() {
         if (player) {
             player.shoot({ emitEvent: false, bulletId: data.id });
         }
+    });
+    socket.on(socketEventsDictonary.hitTarget, function (data) {
+        var player = players.find(function (p) { return p.id === data.playerId; });
+        if (player) {
+            player.explode();
+        }
+    });
+    socket.on(socketEventsDictonary.playerConnected, function (data) {
+        console.log('player connected', data);
+        players = players.filter(function (p) { return p.id !== data.socketId; });
     });
 }
 function draw() {

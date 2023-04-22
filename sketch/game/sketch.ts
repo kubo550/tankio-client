@@ -49,6 +49,19 @@ function setup() {
         }
     });
 
+    socket.on(socketEventsDictonary.hitTarget, (data) => {
+        const player = players.find(p => p.id === data.playerId);
+        if (player) {
+            player.explode();
+        }
+    });
+
+    socket.on(socketEventsDictonary.playerConnected, (data) => {
+        console.log('player connected', data);
+        players = players.filter(p => p.id !== data.socketId);
+    });
+
+
 }
 
 
