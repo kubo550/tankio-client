@@ -55,7 +55,9 @@ class Bullet {
                     this.vel.mult(0);
                     this.lifespan = 0;
                     other.explode();
-                    socket.emit(socketEventsDictonary.hitTarget, {id: other.id, bulletId: this.id});
+                    if (other.id === socket.id) {
+                        socket.emit(socketEventsDictonary.hitTarget, {hitTankId: other.id, bulletId: this.id});
+                    }
                 }
 
             }

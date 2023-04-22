@@ -5,7 +5,14 @@ let socket: io.Socket;
 let restartGameButton: p5.Element;
 
 type ServerWall = { x: number, y: number, width: number, height: number };
-type ServerPlayer = { color: string, rotation: number, name: string, id: string, position: { x: number, y: number }, isHost: boolean };
+type ServerPlayer = {
+    id: string,
+    name: string,
+    color: string,
+    rotation: number,
+    position: { x: number, y: number },
+    stats: { kills: number, deaths: number }
+};
 
 
 let players: Tank[] = []
@@ -49,8 +56,8 @@ function setup() {
         }
     });
 
-    socket.on(socketEventsDictonary.hitTarget, (data) => {
-        const player = players.find(p => p.id === data.playerId);
+    socket.on(socketEventsDictonary.hitTarget, (data: { hitTankId: string, bulletId: string } & {players: ServerPlayer[]}) => {
+        const player = players.find(p => p.id === data.hitTankId);
         if (player) {
             player.explode();
         }

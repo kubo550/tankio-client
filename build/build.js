@@ -59,7 +59,9 @@ var Bullet = (function () {
                     _this.vel.mult(0);
                     _this.lifespan = 0;
                     other.explode();
-                    socket.emit(socketEventsDictonary.hitTarget, { id: other.id, bulletId: _this.id });
+                    if (other.id === socket.id) {
+                        socket.emit(socketEventsDictonary.hitTarget, { hitTankId: other.id, bulletId: _this.id });
+                    }
                 }
             }
         });
@@ -407,7 +409,7 @@ function setup() {
         }
     });
     socket.on(socketEventsDictonary.hitTarget, function (data) {
-        var player = players.find(function (p) { return p.id === data.playerId; });
+        var player = players.find(function (p) { return p.id === data.hitTankId; });
         if (player) {
             player.explode();
         }
