@@ -86,7 +86,7 @@ class Tank {
             const position = p5.Vector.add(this.pos, positionBeforeTank);
             bulletId = bulletId || random(100000).toString();
             const bullet = new Bullet(bulletId, position.x, position.y, this.color, this.rotation);
-            emitEvent && socket.emit('playerShoot', {id: bullet.id, position: {x: bullet.pos.x, y: bullet.pos.y}});
+            emitEvent && socket.emit(socketEventsDictonary.fireBullet, {id: bullet.id, position: {x: bullet.pos.x, y: bullet.pos.y}});
 
             bullets.push(bullet);
             setTimeout(() => {
@@ -172,7 +172,7 @@ class Tank {
     }
 
     private emitMove() {
-        socket.emit('playerMoved', {x: this.pos.x, y: this.pos.y, rotation: this.rotation, id: this.id});
+        socket.emit(socketEventsDictonary.moveTank, {x: this.pos.x, y: this.pos.y, rotation: this.rotation, id: this.id});
     }
 
     private getPolygon() {

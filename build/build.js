@@ -214,7 +214,7 @@ var Tank = (function () {
             var position = p5.Vector.add(this.pos, positionBeforeTank);
             bulletId = bulletId || random(100000).toString();
             var bullet = new Bullet(bulletId, position.x, position.y, this.color, this.rotation);
-            emitEvent && socket.emit('playerShoot', { id: bullet.id, position: { x: bullet.pos.x, y: bullet.pos.y } });
+            emitEvent && socket.emit(socketEventsDictonary.fireBullet, { id: bullet.id, position: { x: bullet.pos.x, y: bullet.pos.y } });
             bullets.push(bullet);
             setTimeout(function () {
                 _this.barrelLength = 10;
@@ -286,7 +286,7 @@ var Tank = (function () {
         this.emitMove();
     };
     Tank.prototype.emitMove = function () {
-        socket.emit('playerMoved', { x: this.pos.x, y: this.pos.y, rotation: this.rotation, id: this.id });
+        socket.emit(socketEventsDictonary.moveTank, { x: this.pos.x, y: this.pos.y, rotation: this.rotation, id: this.id });
     };
     Tank.prototype.getPolygon = function () {
         return new SAT.Polygon(new SAT.Vector(this.pos.x - this.width / 2, this.pos.y - this.height / 2), [
