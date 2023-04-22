@@ -61,7 +61,7 @@ class Tank {
 
         if (this.isShooting) {
             this.showSmokeParticles();
-            this.barrelLength -= 0.5;
+            this.barrelLength -= 0.35;
         }
 
 
@@ -76,6 +76,8 @@ class Tank {
         this.displayName();
 
     }
+
+    private readonly shootingTime = 500;
 
     shoot({emitEvent = true, bulletId}: { emitEvent?: boolean, bulletId?: string } = {}) {
         if (bullets.length < this.bulletLimit && !this.isShooting) {
@@ -93,7 +95,7 @@ class Tank {
 
                 this.barrelLength = 10;
                 this.isShooting = false;
-            }, 200);
+            }, this.shootingTime);
 
         }
     }

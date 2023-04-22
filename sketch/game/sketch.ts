@@ -11,7 +11,7 @@ type ServerPlayer = { color: string, rotation: number, name: string, id: string,
 let players: Tank[] = []
 let player: Tank;
 
-const serverBaseUrl =  process.env.serverBaseUrl ||  'http://localhost:8080';
+const serverBaseUrl = 'http://localhost:8080';
 
 
 function setup() {

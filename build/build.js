@@ -156,6 +156,7 @@ var Tank = (function () {
         this.color = color;
         this.rotateSpeed = 0.09;
         this.speed = 1.3;
+        this.shootingTime = 500;
         this.pos = createVector(x, y);
         this.vel = createVector(0, 0);
         this.movingController = new MovingControls();
@@ -193,7 +194,7 @@ var Tank = (function () {
         }
         if (this.isShooting) {
             this.showSmokeParticles();
-            this.barrelLength -= 0.5;
+            this.barrelLength -= 0.35;
         }
         this.particles.forEach(function (particle) {
             particle.update();
@@ -218,7 +219,7 @@ var Tank = (function () {
             setTimeout(function () {
                 _this.barrelLength = 10;
                 _this.isShooting = false;
-            }, 200);
+            }, this.shootingTime);
         }
     };
     Tank.prototype.checkWallCollision = function (walls) {
@@ -374,7 +375,7 @@ var socket;
 var restartGameButton;
 var players = [];
 var player;
-var serverBaseUrl = process.env.serverBaseUrl || 'http://localhost:8080';
+var serverBaseUrl = 'http://localhost:8080';
 function setup() {
     socket = io.connect(serverBaseUrl);
     socket.on('connect', function () {
