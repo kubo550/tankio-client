@@ -397,6 +397,7 @@ var socket;
 var restartGameButton;
 var players = [];
 var player;
+var isLobby = true;
 var serverBaseUrl = 'http://localhost:8080';
 function setup() {
     socket = io.connect(serverBaseUrl);
@@ -409,6 +410,7 @@ function setup() {
         socket.emit(socketEventsDictonary.startGame);
     });
     socket.on(socketEventsDictonary.startGame, function (data) {
+        isLobby = false;
         walls = generateWallObjects(data.walls);
         players = setupPlayers(data.players);
         player = players.find(function (p) { return p.id === socket.id; });
@@ -437,8 +439,24 @@ function setup() {
         players = players.filter(function (p) { return p.id !== data.socketId; });
     });
 }
+function displayLobbyInfo() {
+    push();
+    fill(255);
+    textAlign(CENTER);
+    textSize(18);
+    text('You are in lobby', CANVAS_WIDTH / 2, 100);
+    textSize(14);
+    text('While you are waiting you can rename your tank', CANVAS_WIDTH / 2, 120);
+    textSize(12);
+    text('Press space to shoot', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 40);
+    text('Use arrows to move', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 60);
+    pop();
+}
 function draw() {
     background(51);
+    if (isLobby) {
+        displayLobbyInfo();
+    }
     walls.forEach(function (wall) { return wall.show(); });
     players.forEach(function (player) { return player.update(); });
     bullets.forEach(function (bullet) { return bullet.update(); });

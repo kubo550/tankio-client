@@ -17,6 +17,7 @@ type ServerPlayer = {
 
 let players: Tank[] = []
 let player: Tank;
+let isLobby = true
 
 const serverBaseUrl = 'http://localhost:8080';
 // const serverBaseUrl = 'https://a36b-83-29-123-120.ngrok-free.app';
@@ -37,6 +38,7 @@ function setup() {
     });
 
     socket.on(socketEventsDictonary.startGame, (data) => {
+        isLobby = false;
         walls = generateWallObjects(data.walls as ServerWall[]);
         players = setupPlayers(data.players as ServerPlayer[]);
         player = players.find(p => p.id === socket.id);
@@ -72,8 +74,29 @@ function setup() {
 }
 
 
+function displayLobbyInfo() {
+    push();
+    fill(255);
+    textAlign(CENTER);
+    textSize(18);
+    text('You are in lobby', CANVAS_WIDTH / 2, 100);
+
+    textSize(14);
+    text('While you are waiting you can rename your tank', CANVAS_WIDTH / 2, 120);
+
+    textSize(12);
+    text('Press space to shoot', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 40);
+    text('Use arrows to move', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 60);
+
+    pop();
+}
+
 function draw() {
     background(51);
+
+    if (isLobby) {
+        displayLobbyInfo();
+    }
 
     walls.forEach(wall => wall.show());
     players.forEach(player => player.update());
