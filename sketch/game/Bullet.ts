@@ -47,11 +47,14 @@ class Bullet {
         others.forEach(other => {
             if (other.isPolygonInside(this.getPolygon())) {
                 if (other instanceof Wall) {
-                    this.vel.mult(0);
                     this.lifespan = 0;
                 }
 
                 if (other instanceof Tank) {
+                    if (!other.isAlive) {
+                        return;
+                    }
+
                     this.vel.mult(0);
                     this.lifespan = 0;
                     other.explode();

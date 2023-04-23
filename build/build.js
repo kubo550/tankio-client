@@ -52,10 +52,12 @@ var Bullet = (function () {
         others.forEach(function (other) {
             if (other.isPolygonInside(_this.getPolygon())) {
                 if (other instanceof Wall) {
-                    _this.vel.mult(0);
                     _this.lifespan = 0;
                 }
                 if (other instanceof Tank) {
+                    if (!other.isAlive) {
+                        return;
+                    }
                     _this.vel.mult(0);
                     _this.lifespan = 0;
                     other.explode();
@@ -171,7 +173,6 @@ var Tank = (function () {
         this.width = 15;
         this.height = 20;
         this.particles = [];
-        this.bulletLimit = 100;
         this.barrelLength = 10;
         this.isShooting = false;
         this.isAlive = true;
@@ -212,7 +213,7 @@ var Tank = (function () {
     Tank.prototype.shoot = function (_a) {
         var _this = this;
         var _b = _a === void 0 ? {} : _a, _c = _b.emitEvent, emitEvent = _c === void 0 ? true : _c, bulletId = _b.bulletId;
-        if (bullets.length < this.bulletLimit && !this.isShooting) {
+        if (!this.isShooting) {
             this.barrelLength = 20;
             this.isShooting = true;
             var positionBeforeTank = p5.Vector.fromAngle(this.rotation - TWO_PI / 4).mult(this.height / 2 + 7);
@@ -261,6 +262,8 @@ var Tank = (function () {
     };
     Tank.prototype.explode = function () {
         this.isAlive = false;
+        this.speed = 0.5;
+        this.rotateSpeed = 0.04;
         this.particles = [];
         this.showTankExplosionParticles();
     };
@@ -456,6 +459,8 @@ function keyPressed() {
         player.movingController.setControls({ down: true });
     }
     if (keyCode === 32) {
+        if (!player.isAlive)
+            return;
         player.shoot({ emitEvent: true });
     }
 }

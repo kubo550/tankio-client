@@ -98,6 +98,7 @@ function keyPressed() {
         player.movingController.setControls({down: true});
     }
     if (keyCode === 32) {
+        if(!player.isAlive) return;
         player.shoot({emitEvent: true});
     }
 }

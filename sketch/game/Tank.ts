@@ -12,9 +12,8 @@ class Tank {
     public isAlive: boolean;
     public name: string;
     private stats: { kills: number, deaths: number };
-    private readonly bulletLimit: number;
-    private readonly rotateSpeed = 0.09;
-    private readonly speed = 1.3;
+    private rotateSpeed = 0.09;
+    private speed = 1.3;
     private barrelLength: number;
     private isShooting: boolean;
     private readonly shootingTime = 500;
@@ -32,7 +31,6 @@ class Tank {
         this.width = 15;
         this.height = 20;
         this.particles = [];
-        this.bulletLimit = 100;
         this.barrelLength = 10;
         this.isShooting = false;
         this.isAlive = true;
@@ -81,7 +79,7 @@ class Tank {
     }
 
     shoot({emitEvent = true, bulletId}: { emitEvent?: boolean, bulletId?: string } = {}) {
-        if (bullets.length < this.bulletLimit && !this.isShooting) {
+        if (!this.isShooting) {
             this.barrelLength = 20;
             this.isShooting = true;
 
@@ -139,6 +137,8 @@ class Tank {
 
     public explode() {
         this.isAlive = false;
+        this.speed = 0.5;
+        this.rotateSpeed = 0.04;
         this.particles = [];
         this.showTankExplosionParticles();
 
