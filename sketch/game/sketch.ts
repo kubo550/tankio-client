@@ -39,12 +39,19 @@ function setup() {
     });
     renamingButton = createButton('Rename');
     renamingButton.mousePressed(() => {
-        const nickname = prompt('Enter new name');
+        const nickname = prompt('Enter new name').trim();
         if (nickname) {
             socket.emit(socketEventsDictonary.setNickname, {nickname: nickname.trim()});
         }
     });
 
+    socket.on(socketEventsDictonary.setNickname, (data: {id: string, nickname: string}) => {
+        const player = players.find(p => p.id === data.id);
+        if (player) {
+            player.setName(data.nickname);
+        }
+
+    });
 
     socket.on(socketEventsDictonary.startGame, (data) => {
         isLobby = false;

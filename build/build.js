@@ -330,6 +330,9 @@ var Tank = (function () {
             this.particles.push(new TankExplosionParticle(this.pos.copy(), randomDirectionVector, this.color));
         }
     };
+    Tank.prototype.setName = function (name) {
+        this.name = name;
+    };
     return Tank;
 }());
 var MovingControls = (function () {
@@ -410,9 +413,15 @@ function setup() {
     });
     renamingButton = createButton('Rename');
     renamingButton.mousePressed(function () {
-        var nickname = prompt('Enter new name');
+        var nickname = prompt('Enter new name').trim();
         if (nickname) {
             socket.emit(socketEventsDictonary.setNickname, { nickname: nickname.trim() });
+        }
+    });
+    socket.on(socketEventsDictonary.setNickname, function (data) {
+        var player = players.find(function (p) { return p.id === data.id; });
+        if (player) {
+            player.setName(data.nickname);
         }
     });
     socket.on(socketEventsDictonary.startGame, function (data) {

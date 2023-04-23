@@ -215,6 +215,9 @@ class Tank {
             this.particles.push(new TankExplosionParticle(this.pos.copy(), randomDirectionVector, this.color));
         }
     }
+    public setName(name: string) {
+        this.name = name;
+    }
 }
 
 class MovingControls {
