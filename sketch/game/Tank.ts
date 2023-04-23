@@ -17,6 +17,7 @@ class Tank {
     private barrelLength: number;
     private isShooting: boolean;
     private readonly shootingTime = 500;
+    private displayNameOffset = 300;
 
     constructor(public x: number, public y: number, public color: string, rotation: number, id: string, name: string, stats: { kills: number, deaths: number }) {
         this.pos = createVector(x, y);
@@ -168,12 +169,15 @@ class Tank {
     }
 
     private displayName() {
+        if (this.displayNameOffset < 50) return
         push();
-        fill(255);
+
+        fill(this.displayNameOffset > 255 ? 255 : this.displayNameOffset);
         textAlign(CENTER);
         textSize(10)
         text(this.name, this.pos.x, this.pos.y + this.height / 2 + 12);
         pop();
+        this.displayNameOffset -= 1;
     }
 
     private moveForward(dir = 1) {

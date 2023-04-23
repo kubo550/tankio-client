@@ -163,6 +163,7 @@ var Tank = (function () {
         this.rotateSpeed = 0.09;
         this.speed = 1.3;
         this.shootingTime = 500;
+        this.displayNameOffset = 300;
         this.pos = createVector(x, y);
         this.vel = createVector(0, 0);
         this.movingController = new MovingControls();
@@ -287,12 +288,15 @@ var Tank = (function () {
         pop();
     };
     Tank.prototype.displayName = function () {
+        if (this.displayNameOffset < 50)
+            return;
         push();
-        fill(255);
+        fill(this.displayNameOffset > 255 ? 255 : this.displayNameOffset);
         textAlign(CENTER);
         textSize(10);
         text(this.name, this.pos.x, this.pos.y + this.height / 2 + 12);
         pop();
+        this.displayNameOffset -= 1;
     };
     Tank.prototype.moveForward = function (dir) {
         if (dir === void 0) { dir = 1; }
