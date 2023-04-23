@@ -3,6 +3,7 @@ let walls: Wall[] = [];
 let bullets: Bullet[] = [];
 let socket: io.Socket;
 let restartGameButton: p5.Element;
+let renamingButton: p5.Element;
 
 type ServerWall = { x: number, y: number, width: number, height: number };
 type ServerPlayer = {
@@ -36,6 +37,14 @@ function setup() {
     restartGameButton.mousePressed(() => {
         socket.emit(socketEventsDictonary.startGame);
     });
+    renamingButton = createButton('Rename');
+    renamingButton.mousePressed(() => {
+        const nickname = prompt('Enter new name');
+        if (nickname) {
+            socket.emit(socketEventsDictonary.setNickname, {nickname: nickname.trim()});
+        }
+    });
+
 
     socket.on(socketEventsDictonary.startGame, (data) => {
         isLobby = false;
@@ -110,34 +119,34 @@ function draw() {
 
 function keyPressed() {
     if (keyCode === UP_ARROW) {
-        player.movingController.setControls({up: true});
+        player?.movingController?.setControls({up: true});
     }
     if (keyCode === LEFT_ARROW) {
-        player.movingController.setControls({left: true});
+        player?.movingController?.setControls({left: true});
     }
     if (keyCode === RIGHT_ARROW) {
-        player.movingController.setControls({right: true});
+        player?.movingController?.setControls({right: true});
     }
     if (keyCode === DOWN_ARROW) {
-        player.movingController.setControls({down: true});
+        player?.movingController?.setControls({down: true});
     }
     if (keyCode === 32) {
-        if(!player.isAlive) return;
+        if(!player?.isAlive) return;
         player.shoot({emitEvent: true});
     }
 }
 
 function keyReleased() {
     if (keyCode === UP_ARROW) {
-        player.movingController.setControls({up: false});
+        player?.movingController?.setControls({up: false});
     }
     if (keyCode === LEFT_ARROW) {
-        player.movingController.setControls({left: false});
+        player?.movingController?.setControls({left: false});
     }
     if (keyCode === RIGHT_ARROW) {
-        player.movingController.setControls({right: false});
+        player?.movingController?.setControls({right: false});
     }
     if (keyCode === DOWN_ARROW) {
-        player.movingController.setControls({down: false});
+        player?.movingController?.setControls({down: false});
     }
 }

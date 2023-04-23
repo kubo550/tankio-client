@@ -393,6 +393,7 @@ var walls = [];
 var bullets = [];
 var socket;
 var restartGameButton;
+var renamingButton;
 var players = [];
 var player;
 var isLobby = true;
@@ -406,6 +407,13 @@ function setup() {
     restartGameButton = createButton('Restart Game');
     restartGameButton.mousePressed(function () {
         socket.emit(socketEventsDictonary.startGame);
+    });
+    renamingButton = createButton('Rename');
+    renamingButton.mousePressed(function () {
+        var nickname = prompt('Enter new name');
+        if (nickname) {
+            socket.emit(socketEventsDictonary.setNickname, { nickname: nickname.trim() });
+        }
     });
     socket.on(socketEventsDictonary.startGame, function (data) {
         isLobby = false;
@@ -463,36 +471,38 @@ function draw() {
     showStats(players);
 }
 function keyPressed() {
+    var _a, _b, _c, _d;
     if (keyCode === UP_ARROW) {
-        player.movingController.setControls({ up: true });
+        (_a = player === null || player === void 0 ? void 0 : player.movingController) === null || _a === void 0 ? void 0 : _a.setControls({ up: true });
     }
     if (keyCode === LEFT_ARROW) {
-        player.movingController.setControls({ left: true });
+        (_b = player === null || player === void 0 ? void 0 : player.movingController) === null || _b === void 0 ? void 0 : _b.setControls({ left: true });
     }
     if (keyCode === RIGHT_ARROW) {
-        player.movingController.setControls({ right: true });
+        (_c = player === null || player === void 0 ? void 0 : player.movingController) === null || _c === void 0 ? void 0 : _c.setControls({ right: true });
     }
     if (keyCode === DOWN_ARROW) {
-        player.movingController.setControls({ down: true });
+        (_d = player === null || player === void 0 ? void 0 : player.movingController) === null || _d === void 0 ? void 0 : _d.setControls({ down: true });
     }
     if (keyCode === 32) {
-        if (!player.isAlive)
+        if (!(player === null || player === void 0 ? void 0 : player.isAlive))
             return;
         player.shoot({ emitEvent: true });
     }
 }
 function keyReleased() {
+    var _a, _b, _c, _d;
     if (keyCode === UP_ARROW) {
-        player.movingController.setControls({ up: false });
+        (_a = player === null || player === void 0 ? void 0 : player.movingController) === null || _a === void 0 ? void 0 : _a.setControls({ up: false });
     }
     if (keyCode === LEFT_ARROW) {
-        player.movingController.setControls({ left: false });
+        (_b = player === null || player === void 0 ? void 0 : player.movingController) === null || _b === void 0 ? void 0 : _b.setControls({ left: false });
     }
     if (keyCode === RIGHT_ARROW) {
-        player.movingController.setControls({ right: false });
+        (_c = player === null || player === void 0 ? void 0 : player.movingController) === null || _c === void 0 ? void 0 : _c.setControls({ right: false });
     }
     if (keyCode === DOWN_ARROW) {
-        player.movingController.setControls({ down: false });
+        (_d = player === null || player === void 0 ? void 0 : player.movingController) === null || _d === void 0 ? void 0 : _d.setControls({ down: false });
     }
 }
 function showStats(players) {
