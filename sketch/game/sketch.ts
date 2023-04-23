@@ -19,8 +19,8 @@ let players: Tank[] = []
 let player: Tank;
 let isLobby = true
 
-const serverBaseUrl = 'http://localhost:8080';
-// const serverBaseUrl = 'https://a36b-83-29-123-120.ngrok-free.app';
+// const serverBaseUrl = 'http://localhost:8080';
+const serverBaseUrl = 'https://a36b-83-29-123-120.ngrok-free.app';
 
 
 function setup() {
@@ -42,6 +42,7 @@ function setup() {
         walls = generateWallObjects(data.walls as ServerWall[]);
         players = setupPlayers(data.players as ServerPlayer[]);
         player = players.find(p => p.id === socket.id);
+        bullets = [];
 
     });
 

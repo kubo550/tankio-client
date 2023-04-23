@@ -236,8 +236,6 @@ var Tank = (function () {
         walls.forEach(function (wall) {
             if (wall.isPolygonInside(_this.getPolygon())) {
                 _this.pos.sub(_this.vel);
-                _this.emitMove();
-                _this.rotation -= _this.rotateSpeed / 2;
                 if (random() > 0.75) {
                     _this.showSmokeParticles();
                 }
@@ -398,7 +396,7 @@ var restartGameButton;
 var players = [];
 var player;
 var isLobby = true;
-var serverBaseUrl = 'http://localhost:8080';
+var serverBaseUrl = 'https://a36b-83-29-123-120.ngrok-free.app';
 function setup() {
     socket = io.connect(serverBaseUrl);
     socket.on('connect', function () {
@@ -414,6 +412,7 @@ function setup() {
         walls = generateWallObjects(data.walls);
         players = setupPlayers(data.players);
         player = players.find(function (p) { return p.id === socket.id; });
+        bullets = [];
     });
     socket.on(socketEventsDictonary.moveTank, function (data) {
         var player = players.find(function (p) { return p.id === data.id; });

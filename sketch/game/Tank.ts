@@ -106,8 +106,6 @@ class Tank {
         walls.forEach(wall => {
             if (wall.isPolygonInside(this.getPolygon())) {
                 this.pos.sub(this.vel);
-                this.emitMove();
-                this.rotation -= this.rotateSpeed / 2;
 
                 if (random() > 0.75) {
                     this.showSmokeParticles();
