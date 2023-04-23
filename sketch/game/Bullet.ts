@@ -4,7 +4,7 @@ class Bullet {
     public lifespan: number;
 
     private readonly speed = 2.25;
-    private readonly size = 5;
+    private readonly size = 4;
 
     constructor(public readonly id: string, public x: number, public y: number, public color: string, public rotation: number) {
         this.pos = createVector(x, y);

@@ -19,7 +19,7 @@ class Tank {
     private isShooting: boolean;
     private readonly shootingTime = 500;
 
-    constructor(public x: number, public y: number, public color: string, rotation: number, id: string, name: string) {
+    constructor(public x: number, public y: number, public color: string, rotation: number, id: string, name: string, stats: { kills: number, deaths: number }) {
         this.pos = createVector(x, y);
         this.vel = createVector(0, 0);
 
@@ -28,7 +28,7 @@ class Tank {
         this.rotation = rotation
         this.id = id;
         this.name = name;
-        this.stats = {kills: 0, deaths: 0}
+        this.stats = stats;
         this.width = 15;
         this.height = 20;
         this.particles = [];
@@ -212,7 +212,7 @@ class Tank {
             const randomDirectionVector = p5.Vector.fromAngle(random(TWO_PI)).mult(random(0.2, 1))
             this.particles.push(new Particle(this.pos.copy(), randomDirectionVector));
         }
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 6; i++) {
             const randomDirectionVector = p5.Vector.fromAngle(random(TWO_PI)).mult(random(0.3, 1))
             this.particles.push(new TankExplosionParticle(this.pos.copy(), randomDirectionVector, this.color));
         }

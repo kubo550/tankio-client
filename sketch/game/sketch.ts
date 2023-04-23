@@ -19,6 +19,7 @@ let players: Tank[] = []
 let player: Tank;
 
 const serverBaseUrl = 'http://localhost:8080';
+// const serverBaseUrl = 'https://a36b-83-29-123-120.ngrok-free.app';
 
 
 function setup() {
@@ -39,6 +40,7 @@ function setup() {
         walls = generateWallObjects(data.walls as ServerWall[]);
         players = setupPlayers(data.players as ServerPlayer[]);
         player = players.find(p => p.id === socket.id);
+
     });
 
     socket.on(socketEventsDictonary.moveTank, (data) => {
@@ -49,7 +51,6 @@ function setup() {
     });
 
     socket.on(socketEventsDictonary.fireBullet, (data) => {
-        console.log('other player fired')
         const player = players.find(p => p.id === data.playerId);
         if (player) {
             player.shoot({emitEvent: false, bulletId: data.id});
@@ -57,14 +58,11 @@ function setup() {
     });
 
     socket.on(socketEventsDictonary.hitTarget, (data: { hitTankId: string, bulletId: string } & {players: ServerPlayer[]}) => {
-        console.log('hit target')
         const player = players.find(p => p.id === data.hitTankId);
         if (player) {
             player.explode();
         }
-        console.log('hit target', data.players.map(p => p.stats));
         players.forEach(p => p.setStats(data.players.find(pl => pl.id === p.id).stats));
-        console.log('hit target', players.map(p => p.getStatsText()));
     });
 
     socket.on(socketEventsDictonary.playerConnected, (data) => {

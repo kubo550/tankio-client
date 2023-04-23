@@ -18,7 +18,7 @@ var Bullet = (function () {
         this.color = color;
         this.rotation = rotation;
         this.speed = 2.25;
-        this.size = 5;
+        this.size = 4;
         this.pos = createVector(x, y);
         this.vel = p5.Vector.fromAngle(rotation - TWO_PI / 4).mult(this.speed);
         this.lifespan = 255;
@@ -154,7 +154,7 @@ var TankExplosionParticle = (function (_super) {
     return TankExplosionParticle;
 }(Particle));
 var Tank = (function () {
-    function Tank(x, y, color, rotation, id, name) {
+    function Tank(x, y, color, rotation, id, name, stats) {
         this.x = x;
         this.y = y;
         this.color = color;
@@ -167,7 +167,7 @@ var Tank = (function () {
         this.rotation = rotation;
         this.id = id;
         this.name = name;
-        this.stats = { kills: 0, deaths: 0 };
+        this.stats = stats;
         this.width = 15;
         this.height = 20;
         this.particles = [];
@@ -324,7 +324,7 @@ var Tank = (function () {
             var randomDirectionVector = p5.Vector.fromAngle(random(TWO_PI)).mult(random(0.2, 1));
             this.particles.push(new Particle(this.pos.copy(), randomDirectionVector));
         }
-        for (var i = 0; i < 5; i++) {
+        for (var i = 0; i < 6; i++) {
             var randomDirectionVector = p5.Vector.fromAngle(random(TWO_PI)).mult(random(0.3, 1));
             this.particles.push(new TankExplosionParticle(this.pos.copy(), randomDirectionVector, this.color));
         }
@@ -417,21 +417,17 @@ function setup() {
         }
     });
     socket.on(socketEventsDictonary.fireBullet, function (data) {
-        console.log('other player fired');
         var player = players.find(function (p) { return p.id === data.playerId; });
         if (player) {
             player.shoot({ emitEvent: false, bulletId: data.id });
         }
     });
     socket.on(socketEventsDictonary.hitTarget, function (data) {
-        console.log('hit target');
         var player = players.find(function (p) { return p.id === data.hitTankId; });
         if (player) {
             player.explode();
         }
-        console.log('hit target', data.players.map(function (p) { return p.stats; }));
         players.forEach(function (p) { return p.setStats(data.players.find(function (pl) { return pl.id === p.id; }).stats); });
-        console.log('hit target', players.map(function (p) { return p.getStatsText(); }));
     });
     socket.on(socketEventsDictonary.playerConnected, function (data) {
         console.log('player connected', data);
@@ -502,6 +498,6 @@ function generateWallObjects(walls) {
     return walls.map(function (wall) { return new Wall(wall.x, wall.y, wall.width, wall.height, 'gray'); });
 }
 function setupPlayers(players) {
-    return players.map(function (player) { return new Tank(player.position.x, player.position.y, player.color, player.rotation, player.id, player.name); });
+    return players.map(function (player) { return new Tank(player.position.x, player.position.y, player.color, player.rotation, player.id, player.name, player.stats); });
 }
 //# sourceMappingURL=build.js.map

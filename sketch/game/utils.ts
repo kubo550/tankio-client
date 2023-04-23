@@ -3,5 +3,5 @@ function generateWallObjects(walls: { x: number; y: number; width: number; heigh
 }
 
 function setupPlayers(players: ServerPlayer[]) {
-    return players.map(player => new Tank(player.position.x, player.position.y, player.color, player.rotation, player.id, player.name));
+    return players.map(player => new Tank(player.position.x, player.position.y, player.color, player.rotation, player.id, player.name, player.stats));
 }
