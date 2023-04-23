@@ -272,8 +272,8 @@ var Tank = (function () {
     Tank.prototype.setStats = function (stats) {
         this.stats = stats;
     };
-    Tank.prototype.getStatsText = function () {
-        return this.stats.kills + "  " + this.stats.deaths;
+    Tank.prototype.getStats = function () {
+        return this.stats;
     };
     Tank.prototype.show = function () {
         push();
@@ -514,7 +514,10 @@ function showStats(players) {
         textAlign(CENTER);
         text(limitNameChars(player.name, 8), x, CANVAS_HEIGHT - 40);
         textSize(10);
-        text(player.getStatsText(), x, CANVAS_HEIGHT - 10);
+        fill(0, 255, 0);
+        text(player.getStats().kills, x - 10, CANVAS_HEIGHT - 10);
+        fill(255, 40, 40);
+        text(player.getStats().deaths, x + 10, CANVAS_HEIGHT - 10);
         rectMode(CENTER);
         fill(player.color);
         rect(x, CANVAS_HEIGHT - 30, 16, 12);

@@ -151,8 +151,8 @@ class Tank {
         this.stats = stats;
     }
 
-    public getStatsText() {
-        return `${this.stats.kills}  ${this.stats.deaths}`
+    public getStats() {
+        return this.stats;
     }
     private show() {
         push();

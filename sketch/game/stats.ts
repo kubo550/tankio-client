@@ -8,8 +8,11 @@ function showStats(players: Tank[]) {
         text(limitNameChars(player.name, 8), x, CANVAS_HEIGHT - 40);
 
         textSize(10);
-        text(player.getStatsText(), x, CANVAS_HEIGHT - 10);
+        fill(0, 255, 0);
+        text(player.getStats().kills, x - 10, CANVAS_HEIGHT - 10);
 
+        fill(255, 40, 40);
+        text(player.getStats().deaths, x + 10, CANVAS_HEIGHT - 10);
 
         rectMode(CENTER);
         fill(player.color);
