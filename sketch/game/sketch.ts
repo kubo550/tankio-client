@@ -20,8 +20,8 @@ let players: Tank[] = []
 let player: Tank;
 let isLobby = true
 
-// const serverBaseUrl = 'http://localhost:8080';
-const serverBaseUrl = 'https://a36b-83-29-123-120.ngrok-free.app';
+const serverBaseUrl = 'http://localhost:8080';
+// const serverBaseUrl = 'https://a36b-83-29-123-120.ngrok-free.app';
 
 
 function setup() {
@@ -37,13 +37,20 @@ function setup() {
     restartGameButton.mousePressed(() => {
         socket.emit(socketEventsDictonary.startGame);
     });
+
     renamingButton = createButton('Rename');
     renamingButton.mousePressed(() => {
         const nickname = prompt('Enter new name').trim();
         if (nickname) {
+            localStorage.setItem('nickname', nickname);
             socket.emit(socketEventsDictonary.setNickname, {nickname: nickname.trim()});
         }
     });
+    const nickname = localStorage.getItem('nickname');
+    if (nickname) {
+        socket.emit(socketEventsDictonary.setNickname, {nickname: nickname.trim()});
+    }
+
 
     socket.on(socketEventsDictonary.setNickname, (data: {id: string, nickname: string}) => {
         const player = players.find(p => p.id === data.id);

@@ -404,7 +404,7 @@ var renamingButton;
 var players = [];
 var player;
 var isLobby = true;
-var serverBaseUrl = 'https://a36b-83-29-123-120.ngrok-free.app';
+var serverBaseUrl = 'http://localhost:8080';
 function setup() {
     socket = io.connect(serverBaseUrl);
     socket.on('connect', function () {
@@ -419,9 +419,14 @@ function setup() {
     renamingButton.mousePressed(function () {
         var nickname = prompt('Enter new name').trim();
         if (nickname) {
+            localStorage.setItem('nickname', nickname);
             socket.emit(socketEventsDictonary.setNickname, { nickname: nickname.trim() });
         }
     });
+    var nickname = localStorage.getItem('nickname');
+    if (nickname) {
+        socket.emit(socketEventsDictonary.setNickname, { nickname: nickname.trim() });
+    }
     socket.on(socketEventsDictonary.setNickname, function (data) {
         var player = players.find(function (p) { return p.id === data.id; });
         if (player) {
