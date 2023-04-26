@@ -126,7 +126,11 @@ function displayLobbyInfo() {
 function showFloor() {
     push();
     imageMode(CORNER);
-    image(floorImg, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    for (let i = 0; i < CANVAS_WIDTH; i += 50) {
+        for (let j = 0; j < CANVAS_HEIGHT; j += 50) {
+            image(floorImg, i, j, 50, 50);
+        }
+    }
     pop();
 }
 
@@ -136,7 +140,7 @@ function draw() {
     if (isLobby) {
         displayLobbyInfo();
     } else {
-        // showFloor();
+        showFloor();
     }
 
     walls.forEach(wall => wall.show());
