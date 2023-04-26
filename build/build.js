@@ -497,7 +497,7 @@ function draw() {
 function keyPressed() {
     var _a, _b, _c, _d;
     if (keyCode === UP_ARROW) {
-        (_a = player === null || player === void 0 ? void 0 : player.movingController) === null || _a === void 0 ? void 0 : _a.setControls({ up: true });
+        (_a = player === null || player === void 0 ? void 0 : player.movingController) === null || _a === void 0 ? void 0 : _a.setControls({ up: true, down: false });
     }
     if (keyCode === LEFT_ARROW) {
         (_b = player === null || player === void 0 ? void 0 : player.movingController) === null || _b === void 0 ? void 0 : _b.setControls({ left: true });
@@ -506,7 +506,7 @@ function keyPressed() {
         (_c = player === null || player === void 0 ? void 0 : player.movingController) === null || _c === void 0 ? void 0 : _c.setControls({ right: true });
     }
     if (keyCode === DOWN_ARROW) {
-        (_d = player === null || player === void 0 ? void 0 : player.movingController) === null || _d === void 0 ? void 0 : _d.setControls({ down: true });
+        (_d = player === null || player === void 0 ? void 0 : player.movingController) === null || _d === void 0 ? void 0 : _d.setControls({ down: true, up: false });
     }
     if (keyCode === 32) {
         if (!(player === null || player === void 0 ? void 0 : player.isAlive))

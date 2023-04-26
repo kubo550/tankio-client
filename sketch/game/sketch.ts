@@ -150,7 +150,7 @@ function draw() {
 
 function keyPressed() {
     if (keyCode === UP_ARROW) {
-        player?.movingController?.setControls({up: true});
+        player?.movingController?.setControls({up: true, down: false});
     }
     if (keyCode === LEFT_ARROW) {
         player?.movingController?.setControls({left: true});
@@ -159,7 +159,7 @@ function keyPressed() {
         player?.movingController?.setControls({right: true});
     }
     if (keyCode === DOWN_ARROW) {
-        player?.movingController?.setControls({down: true});
+        player?.movingController?.setControls({down: true, up: false});
     }
     if (keyCode === 32) {
         if (!player?.isAlive) return;
