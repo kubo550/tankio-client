@@ -6,7 +6,7 @@ class Bullet {
     private readonly speed = 2.25;
     private readonly size = 4;
 
-    constructor(public readonly id: string, public x: number, public y: number, public color: string, public rotation: number) {
+    constructor(public readonly id: string, public x: number, public y: number, public color: string, public rotation: number, private shooterId: string) {
         this.pos = createVector(x, y);
         this.vel = p5.Vector.fromAngle(rotation - TWO_PI / 4).mult(this.speed);
         this.lifespan = 255;
@@ -16,6 +16,8 @@ class Bullet {
         push();
         ellipseMode(CENTER)
         noStroke();
+        stroke(0)
+        strokeWeight(1)
         fill(this.color);
         translate(this.pos.x, this.pos.y);
         rotate(this.rotation);
@@ -51,9 +53,11 @@ class Bullet {
                 }
 
                 if (other instanceof Tank) {
-                    if (!other.isAlive) {
+                    const isOwnBullet = other.id === this.shooterId;
+                    if (!other.isAlive || isOwnBullet) {
                         return;
                     }
+
 
                     this.vel.mult(0);
                     this.lifespan = 0;

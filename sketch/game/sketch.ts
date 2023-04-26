@@ -4,6 +4,8 @@ let bullets: Bullet[] = [];
 let socket: io.Socket;
 let restartGameButton: p5.Element;
 let renamingButton: p5.Element;
+let floorImg: p5.Image;
+let wallImg: p5.Image;
 
 type ServerWall = { x: number, y: number, width: number, height: number };
 type ServerPlayer = {
@@ -21,8 +23,14 @@ let player: Tank;
 let isLobby = true
 
 const serverBaseUrl = 'http://localhost:8080';
+
 // const serverBaseUrl = 'https://a36b-83-29-123-120.ngrok-free.app';
 
+
+function preload() {
+    floorImg = loadImage('./img/floor.png');
+    wallImg = loadImage('./img/wall.jpeg');
+}
 
 function setup() {
     socket = io.connect(serverBaseUrl);
@@ -52,7 +60,7 @@ function setup() {
     }
 
 
-    socket.on(socketEventsDictonary.setNickname, (data: {id: string, nickname: string}) => {
+    socket.on(socketEventsDictonary.setNickname, (data: { id: string, nickname: string }) => {
         const player = players.find(p => p.id === data.id);
         if (player) {
             player.setName(data.nickname);
@@ -83,7 +91,7 @@ function setup() {
         }
     });
 
-    socket.on(socketEventsDictonary.hitTarget, (data: { hitTankId: string, bulletId: string } & {players: ServerPlayer[]}) => {
+    socket.on(socketEventsDictonary.hitTarget, (data: { hitTankId: string, bulletId: string } & { players: ServerPlayer[] }) => {
         const player = players.find(p => p.id === data.hitTankId);
         if (player) {
             player.explode();
@@ -115,17 +123,26 @@ function displayLobbyInfo() {
     pop();
 }
 
+function showFloor() {
+    push();
+    imageMode(CORNER);
+    image(floorImg, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    pop();
+}
+
 function draw() {
     background(51);
 
     if (isLobby) {
         displayLobbyInfo();
+    } else {
+        // showFloor();
     }
 
     walls.forEach(wall => wall.show());
-    players.forEach(player => player.update());
     bullets.forEach(bullet => bullet.update());
     bullets = bullets.filter(bullet => bullet.isAlive());
+    players.forEach(player => player.update());
 
     showStats(players);
 }
@@ -145,7 +162,7 @@ function keyPressed() {
         player?.movingController?.setControls({down: true});
     }
     if (keyCode === 32) {
-        if(!player?.isAlive) return;
+        if (!player?.isAlive) return;
         player.shoot({emitEvent: true});
     }
 }

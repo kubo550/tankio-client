@@ -7,7 +7,7 @@ class Wall {
         push();
         noStroke()
         fill(this.color);
-        rect(this.x, this.y, this.width, this.height);
+        image(wallImg, this.x, this.y, this.width, this.height);
         pop();
     }
 

@@ -84,10 +84,10 @@ class Tank {
             this.barrelLength = 20;
             this.isShooting = true;
 
-            const positionBeforeTank = p5.Vector.fromAngle(this.rotation - TWO_PI / 4).mult(this.height / 2 + 7);
+            const positionBeforeTank = p5.Vector.fromAngle(this.rotation - TWO_PI / 4)
             const position = p5.Vector.add(this.pos, positionBeforeTank);
             bulletId = bulletId || random(100000).toString();
-            const bullet = new Bullet(bulletId, position.x, position.y, this.color, this.rotation);
+            const bullet = new Bullet(bulletId, position.x, position.y, this.color, this.rotation, this.id);
             emitEvent && socket.emit(socketEventsDictonary.fireBullet, {
                 id: bullet.id,
                 position: {x: bullet.pos.x, y: bullet.pos.y}
@@ -95,7 +95,6 @@ class Tank {
 
             bullets.push(bullet);
             setTimeout(() => {
-
                 this.barrelLength = 10;
                 this.isShooting = false;
             }, this.shootingTime);
@@ -108,7 +107,7 @@ class Tank {
             if (wall.isPolygonInside(this.getPolygon())) {
                 this.pos.sub(this.vel);
 
-                if (random() > 0.75) {
+                if (random() > 0.55) {
                     this.showSmokeParticles();
                 }
             }
@@ -118,20 +117,7 @@ class Tank {
     public isPolygonInside(otherPolygon: SAT.Polygon) {
         const itsPolygon = this.getPolygon();
 
-        const testPolygonPolygon = SAT.testPolygonPolygon(otherPolygon, itsPolygon);
-
-        if (testPolygonPolygon) {
-            push();
-            rectMode(CENTER)
-            translate(this.pos.x, this.pos.y);
-            rotate(this.rotation);
-            fill('pink');
-            rect(0, 0, this.width, this.height);
-            fill(0);
-            rect(0, -this.height / 3, 5, 8);
-            pop()
-        }
-        return testPolygonPolygon;
+        return SAT.testPolygonPolygon(otherPolygon, itsPolygon);
     }
 
     public explode() {
@@ -214,8 +200,8 @@ class Tank {
             const randomDirectionVector = p5.Vector.fromAngle(random(TWO_PI)).mult(random(0.2, 1))
             this.particles.push(new Particle(this.pos.copy(), randomDirectionVector));
         }
-        for (let i = 0; i < 6; i++) {
-            const randomDirectionVector = p5.Vector.fromAngle(random(TWO_PI)).mult(random(0.3, 1))
+        for (let i = 0; i < 7; i++) {
+            const randomDirectionVector = p5.Vector.fromAngle(random(TWO_PI)).mult(random(0.3, 1.3))
             this.particles.push(new TankExplosionParticle(this.pos.copy(), randomDirectionVector, this.color));
         }
     }

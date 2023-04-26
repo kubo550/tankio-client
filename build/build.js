@@ -11,12 +11,13 @@ var socketEventsDictonary;
     socketEventsDictonary["playerConnected"] = "playerConnected";
 })(socketEventsDictonary || (socketEventsDictonary = {}));
 var Bullet = (function () {
-    function Bullet(id, x, y, color, rotation) {
+    function Bullet(id, x, y, color, rotation, shooterId) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.color = color;
         this.rotation = rotation;
+        this.shooterId = shooterId;
         this.speed = 2.25;
         this.size = 4;
         this.pos = createVector(x, y);
@@ -27,6 +28,8 @@ var Bullet = (function () {
         push();
         ellipseMode(CENTER);
         noStroke();
+        stroke(0);
+        strokeWeight(1);
         fill(this.color);
         translate(this.pos.x, this.pos.y);
         rotate(this.rotation);
@@ -55,7 +58,8 @@ var Bullet = (function () {
                     _this.lifespan = 0;
                 }
                 if (other instanceof Tank) {
-                    if (!other.isAlive) {
+                    var isOwnBullet = other.id === _this.shooterId;
+                    if (!other.isAlive || isOwnBullet) {
                         return;
                     }
                     _this.vel.mult(0);
@@ -217,10 +221,10 @@ var Tank = (function () {
         if (!this.isShooting) {
             this.barrelLength = 20;
             this.isShooting = true;
-            var positionBeforeTank = p5.Vector.fromAngle(this.rotation - TWO_PI / 4).mult(this.height / 2 + 7);
+            var positionBeforeTank = p5.Vector.fromAngle(this.rotation - TWO_PI / 4);
             var position = p5.Vector.add(this.pos, positionBeforeTank);
             bulletId = bulletId || random(100000).toString();
-            var bullet = new Bullet(bulletId, position.x, position.y, this.color, this.rotation);
+            var bullet = new Bullet(bulletId, position.x, position.y, this.color, this.rotation, this.id);
             emitEvent && socket.emit(socketEventsDictonary.fireBullet, {
                 id: bullet.id,
                 position: { x: bullet.pos.x, y: bullet.pos.y }
@@ -237,7 +241,7 @@ var Tank = (function () {
         walls.forEach(function (wall) {
             if (wall.isPolygonInside(_this.getPolygon())) {
                 _this.pos.sub(_this.vel);
-                if (random() > 0.75) {
+                if (random() > 0.55) {
                     _this.showSmokeParticles();
                 }
             }
@@ -245,19 +249,7 @@ var Tank = (function () {
     };
     Tank.prototype.isPolygonInside = function (otherPolygon) {
         var itsPolygon = this.getPolygon();
-        var testPolygonPolygon = SAT.testPolygonPolygon(otherPolygon, itsPolygon);
-        if (testPolygonPolygon) {
-            push();
-            rectMode(CENTER);
-            translate(this.pos.x, this.pos.y);
-            rotate(this.rotation);
-            fill('pink');
-            rect(0, 0, this.width, this.height);
-            fill(0);
-            rect(0, -this.height / 3, 5, 8);
-            pop();
-        }
-        return testPolygonPolygon;
+        return SAT.testPolygonPolygon(otherPolygon, itsPolygon);
     };
     Tank.prototype.explode = function () {
         this.isAlive = false;
@@ -329,8 +321,8 @@ var Tank = (function () {
             var randomDirectionVector = p5.Vector.fromAngle(random(TWO_PI)).mult(random(0.2, 1));
             this.particles.push(new Particle(this.pos.copy(), randomDirectionVector));
         }
-        for (var i = 0; i < 6; i++) {
-            var randomDirectionVector = p5.Vector.fromAngle(random(TWO_PI)).mult(random(0.3, 1));
+        for (var i = 0; i < 7; i++) {
+            var randomDirectionVector = p5.Vector.fromAngle(random(TWO_PI)).mult(random(0.3, 1.3));
             this.particles.push(new TankExplosionParticle(this.pos.copy(), randomDirectionVector, this.color));
         }
     };
@@ -367,7 +359,7 @@ var Wall = (function () {
         push();
         noStroke();
         fill(this.color);
-        rect(this.x, this.y, this.width, this.height);
+        image(wallImg, this.x, this.y, this.width, this.height);
         pop();
     };
     Wall.prototype.isPolygonInside = function (otherPolygon) {
@@ -401,10 +393,16 @@ var bullets = [];
 var socket;
 var restartGameButton;
 var renamingButton;
+var floorImg;
+var wallImg;
 var players = [];
 var player;
 var isLobby = true;
 var serverBaseUrl = 'http://localhost:8080';
+function preload() {
+    floorImg = loadImage('./img/floor.png');
+    wallImg = loadImage('./img/wall.jpeg');
+}
 function setup() {
     socket = io.connect(serverBaseUrl);
     socket.on('connect', function () {
@@ -477,15 +475,23 @@ function displayLobbyInfo() {
     text('Use arrows to move', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 60);
     pop();
 }
+function showFloor() {
+    push();
+    imageMode(CORNER);
+    image(floorImg, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    pop();
+}
 function draw() {
     background(51);
     if (isLobby) {
         displayLobbyInfo();
     }
+    else {
+    }
     walls.forEach(function (wall) { return wall.show(); });
-    players.forEach(function (player) { return player.update(); });
     bullets.forEach(function (bullet) { return bullet.update(); });
     bullets = bullets.filter(function (bullet) { return bullet.isAlive(); });
+    players.forEach(function (player) { return player.update(); });
     showStats(players);
 }
 function keyPressed() {
