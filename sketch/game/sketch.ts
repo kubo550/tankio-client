@@ -24,9 +24,6 @@ let isLobby = true
 
 const serverBaseUrl = 'http://localhost:8080';
 
-// const serverBaseUrl = 'https://a36b-83-29-123-120.ngrok-free.app';
-
-
 function preload() {
     floorImg = loadImage('./img/floor.png');
     wallImg = loadImage('./img/wall.jpeg');

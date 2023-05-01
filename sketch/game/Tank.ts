@@ -17,7 +17,7 @@ class Tank {
     private barrelLength: number;
     private isShooting: boolean;
     private readonly shootingTime = 500;
-    private displayNameOffset = 300;
+    private displayNameOffset = 800;
 
     constructor(public x: number, public y: number, public color: string, rotation: number, id: string, name: string, stats: { kills: number, deaths: number }) {
         this.pos = createVector(x, y);
