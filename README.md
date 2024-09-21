@@ -14,7 +14,7 @@ Link to the backend repository:
 - Avoid getting hit by the other players' fire.
 - The last tank standing wins!
 
-## Interesting Details
+## Tech Details
 
 - The game uses the p5.js library for rendering graphics and handling user input.
 - The game has no player limit, but the game is best played with 2-5 players.
